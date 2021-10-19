@@ -1,21 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import RememberMeThisNavigationContainer from './navigation/RememberMeThisNavigation';
+import {createStore,combineReducers,applyMiddleware} from 'redux';
+import {Provider} from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+import taskReducer from './store/reducers/task';
+import actionReducer from './store/reducers/action';
+import measureReducer from './store/reducers/measure';
+import modalityReducer from './store/reducers/modality';
+
+const rootReducer = combineReducers({
+  task: taskReducer,
+  action:actionReducer,
+  measure:measureReducer,
+  modality:modalityReducer
+});
+
+const store = createStore(rootReducer,applyMiddleware(ReduxThunk));
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  return<Provider store={store}>
+        <RememberMeThisNavigationContainer />
+  </Provider> 
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
