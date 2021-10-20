@@ -1,21 +1,30 @@
-import { ADDTASK,LOADTASKS } from "../actions/task";
+import { ADDTASK,LOADTASKS,REMOVETASK,HANDLERTASK} from "../actions/task";
 
 const initialState = {
     tasks: [],
+    tasksLog:[]
 }
 
 export default (state = initialState,action) =>{
-  
+
     switch(action.type){
-        case ADDTASK:
-            return {
-                tasks:[...tasks,action.newTask],
-            };
+
         case LOADTASKS:
                 return {
-                        tasks:action.tasks,
-            };
-            
+                    ...state,
+                    tasks:action.tasks,
+                };
+        case ADDTASK:
+                return {
+                    ...state,
+                    tasks:[...state.tasks,action.newTask],
+                };
+        case HANDLERTASK:
+        case REMOVETASK:
+                return {
+                    ...state,
+                    tasks: action.tasks,
+                };    
         default:
             return state;
     }

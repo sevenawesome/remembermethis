@@ -8,8 +8,8 @@ import WeeksDay from '../../models/weekDays;';
 export const LOADTASKS =  'LOADTASKS';
 export const ADDTASK = 'ADDTASK';
 export const REMOVETASK = 'REMOVETASK';
-export const PAUSETASK = 'PAUSETASK';
-export const RESUMETASK = 'RESUMETASK';
+export const HANDLERTASK = 'HANDLERTASK';
+
 
 
 export const loadTask = () =>{
@@ -22,22 +22,95 @@ export const loadTask = () =>{
     new Modality(1,'AUTOMATIC','It will auto generate after an espesific time.',1),
     new Date(),
     undefined,
+    undefined,
     new WeeksDay(false,true,true,true,true,true,false),
     20,
     new Measure(2,'MINUTES',1),
+    false,
+    false,
     1
     ));
 
   return dispatch =>{
-    dispatch({type:LOADTASKS,tasks})
+    dispatch({type:LOADTASKS,tasks:tasks})
   }
 };
 
 
 
 export const addNewTask = newTask =>{
-    console.log("addNewTask");
     return dispatch =>{
-      dispatch({type: ADDTASK, newTask});
+      dispatch({type: ADDTASK, newTask : newTask});
     }
 };
+
+
+export const removeTask = (isReal,id) =>{
+  return (dispatch,getState) =>{
+    const temp = [...getState().task.tasks];
+    let newTaskList = []
+    if(isReal){
+      newTaskList = temp.filter(task => task.id != id);
+      //EliminatedDate shoud be here
+    }else{
+      newTaskList = temp.map(taskTemp=>{
+        if(taskTemp.id === id){
+          taskTemp.state = 0;
+          taskTemp.disabledDate = new Date();
+        }
+        return taskTemp;
+      }); 
+    }
+    dispatch({type: REMOVETASK, tasks: newTaskList});
+  }
+};
+
+export const restoreTask = (id) =>{
+  return (dispatch,getState) =>{
+    const temp = [...getState().task.tasks];
+      
+    const newTaskList = temp.map(taskTemp=>{
+        if(taskTemp.id === id){
+          taskTemp.state = 1;
+          taskTemp.disabledDate = undefined;
+        }
+        return taskTemp;
+      }); 
+
+    dispatch({type: REMOVETASK, tasks: newTaskList});
+  }
+};
+
+
+export const handleTask = (action,id) =>{
+  return (dispatch,getState) =>{
+    const temp = [...getState().task.tasks];
+      
+    const newTaskList = temp.map(taskTemp=>{
+        if(taskTemp.id === id){
+          switch(action){
+            case 1:
+              //Running
+              taskTemp.isRunning = true;
+              taskTemp.isPause = false;
+            break;
+            case 2:
+              //Pause
+              taskTemp.isPause = true;
+              taskTemp.isRunning = false;  
+              break;
+            default:
+              //Stop
+              taskTemp.isPause = false;
+              taskTemp.isRunning = false;  
+            
+          }
+        }
+        return taskTemp;
+      }); 
+
+    dispatch({type: HANDLERTASK, tasks: newTaskList});
+  }
+};
+
+
