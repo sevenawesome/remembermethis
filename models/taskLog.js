@@ -9,8 +9,6 @@ class TaskLog{
         this.totalRunTimes = totalRunTimes;
         this.state = state;
     }
-
-
 }
 
 export default TaskLog;
